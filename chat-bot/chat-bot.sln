@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Messaging", "Bot.Messag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotAPI", "BotAPI\BotAPI.csproj", "{936B587D-D97B-4C62-9D60-FBFB8CFA0FA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat.Services", "Chat.Services\Chat.Services.csproj", "{9C0DDFA4-F0EF-470D-8208-D243644C27DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.Services", "Chat.Services\Chat.Services.csproj", "{9C0DDFA4-F0EF-470D-8208-D243644C27DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotServicesTests", "BotServicesTests\BotServicesTests.csproj", "{6B3CF425-4DA9-496E-AFA2-62F0DDBDF707}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{9C0DDFA4-F0EF-470D-8208-D243644C27DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C0DDFA4-F0EF-470D-8208-D243644C27DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C0DDFA4-F0EF-470D-8208-D243644C27DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B3CF425-4DA9-496E-AFA2-62F0DDBDF707}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B3CF425-4DA9-496E-AFA2-62F0DDBDF707}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B3CF425-4DA9-496E-AFA2-62F0DDBDF707}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B3CF425-4DA9-496E-AFA2-62F0DDBDF707}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
