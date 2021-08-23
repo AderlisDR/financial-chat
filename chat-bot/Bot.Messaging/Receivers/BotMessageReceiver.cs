@@ -64,13 +64,13 @@ namespace Bot.Messaging.Receivers
                     _sender.SendMessage(GetStockQuoteBotMessage(quote));
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _sender.SendMessage(new ClientMessage
                 {
                     ClientUserName = "#BOT",
                     SendedOnUtc = DateTime.Now,
-                    Message = $"Something went wrong getting stock quote: {e.Message}"
+                    Message = $"Could not get stock quote."
                 });
             }
         }
@@ -81,7 +81,7 @@ namespace Bot.Messaging.Receivers
             {
                 ClientUserName = "#BOT",
                 SendedOnUtc = DateTime.Now,
-                Message = $"{quote.Symbol} quote is {quote.Close} per share"
+                Message = $"{quote.Symbol} quote is ${quote.Close} per share"
             };
         }
 

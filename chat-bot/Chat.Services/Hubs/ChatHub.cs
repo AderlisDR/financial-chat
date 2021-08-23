@@ -1,6 +1,5 @@
 ﻿using ChatBot.Core.Contracts;
 using ChatBot.Core.Models;
-using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -22,6 +21,14 @@ namespace Chat.Services.Hubs
             _sender = sender;
         }
 
+        private void AddToCurrentMessages(ClientMessage message)
+        {
+            _currentMessages.Add(message);
+
+            if (_currentMessages.Count() > 50)
+                _currentMessages.RemoveAt(0);
+        }
+
         public override Task OnConnectedAsync()
         {
             string userName = Context.User.Identity.Name;
@@ -31,8 +38,13 @@ namespace Chat.Services.Hubs
             {
                 _connectedUsers.Add(new ConnectedUser { ConnectionId = connectionId, UserName = userName });
                 Clients.All.SendAsync("ConnectedUsersChanged", _connectedUsers);
-                Clients.Caller.SendAsync("CurrentMessages", _currentMessages);
             }
+            else
+            {
+                Clients.Caller.SendAsync("ConnectedUsersChanged", _connectedUsers);
+            }
+
+            Clients.Caller.SendAsync("CurrentMessages", _currentMessages);
 
             return base.OnConnectedAsync();
         }
@@ -45,16 +57,17 @@ namespace Chat.Services.Hubs
         public async Task SendMessage(ClientMessage message)
         {
             await Clients.All.SendAsync("NewMessage", message);
-
-            _currentMessages.Append(message);
-
-            if (_currentMessages.Count() > 50)
-                _currentMessages.RemoveAt(0);
+            AddToCurrentMessages(message);
 
             if (message.Message.Contains("/stock="))
             {
                 _sender.SendMessage(message);
             }
+        }
+
+        public void SaveBotMessage(ClientMessage message)
+        {
+            AddToCurrentMessages(message);
         }
 
         public async Task DisconnectUser(string userName)

@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ClientMessage } from '../models/client-message.model';
 import { ConnectedUser } from '../models/connected-user.model';
 import { tokenGetter } from '../shared/functions/token-getter';
+import { AuthService } from './auth.service';
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +16,10 @@ export class MessengerService {
     currentMessages = new EventEmitter<ClientMessage[]>();
     newMessage = new EventEmitter<ClientMessage>();
 
-    constructor(@Inject('BASE_URL') private baseUrl: string, private toastr: ToastrService) {
+    constructor(
+        @Inject('BASE_URL') private baseUrl: string,
+        private toastr: ToastrService,
+        private authService: AuthService) {
         this.connection = new signalR.HubConnectionBuilder().withUrl(`${this.baseUrl}hub/chat`, { accessTokenFactory: tokenGetter }).build();
         this.startConnection();
      }
@@ -28,9 +32,13 @@ export class MessengerService {
             this.receiveConnectedUsers();
             this.receiveCurrentMessages();
             this.receiveMessage();
-            this.toastr.success("Connected");
+            this.toastr.success("", "Connected", {
+                positionClass: 'toast-bottom-right'
+            });
         }).catch((error: HttpErrorResponse) => {
-            this.toastr.error(error.error, 'Error connecting to chatroom');
+            this.toastr.error(error.error, 'Error connecting to chatroom', {
+                positionClass: 'toast-bottom-right'
+            });
         });
     }
 
@@ -52,11 +60,14 @@ export class MessengerService {
         });
     }
 
-    closeConnectionForClient(userName: string) {
+    closeConnectionForCurrentClient() {
+        const userName = this.authService.getCurrentUser().userName;
         this.connection.invoke("DisconnectUser", userName).then(() => {
-            console.log(`Usuario ${userName} dejo el chat.`);
+            this.authService.logout();
         }).catch(() => {
-            console.log(`Usuario ${userName} no pudo dejar el chat.`);
+            this.toastr.error("An error occurred while loging you out.", "Error", {
+                positionClass: 'toast-bottom-right'
+            });
         });
     }
 
@@ -64,7 +75,7 @@ export class MessengerService {
         return this.connection.invoke("SendMessage", message);
     }
 
-    getConnectedUsers() {
-        return this.connectedUsers;
+    saveBotMessage(message: ClientMessage) {
+        return this.connection.invoke("SaveBotMessage", message);
     }
 }

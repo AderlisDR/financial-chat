@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
       this.notificationService.closeLoading();
       this.router.navigateByUrl('/chatroom');
     }).catch((error: HttpErrorResponse) => {
-      this.notificationService.showErrorMessages(error.error.errors, 'Some errors occurred while loging you in');
+      this.notificationService.showErrorMessage(error.error.errorMessage);
     });
   }
 }

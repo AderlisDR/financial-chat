@@ -9,27 +9,24 @@
     </ul>
   </div>
   <div class="col-sm-12 col-md-10 chat-main">
-    <ul id="chat">
-      <li class="{{item.clientUserName === currentUserName ? 'me' : 'you'}}" *ngFor="let item of currentMessages;">
+    <ul #chat id="chat">
+      <li class="{{getMessageStyleClassByUserName(item.clientUserName)}}" *ngFor="let item of currentMessages;">
         <div class="entete">
           <h2><b>{{ item.clientUserName }}</b></h2>&nbsp;&nbsp;
           <h3>{{ item.sendedOnUtc | date:'medium' }}</h3>
         </div>
-        <div class="triangle"></div>
         <div class="message">
           {{ item.message }}
         </div>
       </li>
     </ul>
-    <div class="chat-footer row d-flex align-items-center">
-        <div class="col-12">
-            <div class="row d-flex justify-content-center">
-                <textarea placeholder="Type your message" [formControl]="message"></textarea>
-            </div>
-            <div class="row d-flex justify-content-center">
-                <button type="button" class="btn btn-link" (click)="send()">Send</button>
-            </div>
-        </div>
+    <div class="chat-footer row d-flex align-items-center justify-content-center text-center">
+      <div class="col-sm-12 col-md-10">
+        <textarea class="form-control" rows="3" placeholder="Type your message" [formControl]="message" (keydown)="checkIsEnterKey($event)"></textarea>
+      </div>
+      <div class="col-sm-12 col-md-2">
+        <button type="button" class="btn btn-link" (click)="send()">Send</button>
+      </div>
     </div>
   </div>
 </div>

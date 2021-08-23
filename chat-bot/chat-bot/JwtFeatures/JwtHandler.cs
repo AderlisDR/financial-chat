@@ -29,7 +29,11 @@ namespace ChatAPI.JwtFeatures
 
         public List<Claim> GetClaims(IdentityUser user)
         {
-            var claims = new List<Claim> { new Claim("userName", user.UserName, ClaimValueTypes.String) };
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName, ClaimValueTypes.String),
+                new Claim("userName", user.UserName, ClaimValueTypes.String)
+            };
             return claims;
         }
 

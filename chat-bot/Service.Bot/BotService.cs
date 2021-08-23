@@ -1,6 +1,7 @@
 ﻿using ChatBot.Core.Contracts;
 using ChatBot.Core.Models;
 using CsvHelper;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -38,15 +39,25 @@ namespace Bot.Services
 
         public StockQuote GetStockQuote(ClientMessage clientMessage)
         {
+            if (clientMessage == null)
+                throw new ArgumentNullException($"The argument {nameof(clientMessage)} cannot be null.");
+
             string stockCode = GetStockCodeFromMessage(clientMessage.Message);
 
             if (!string.IsNullOrWhiteSpace(stockCode))
             {
-                IList<StockQuote> stockQuotes = GetStockQuoteFromAPI(stockCode);
-
-                if (stockQuotes != null && stockQuotes.Any())
+                try
                 {
-                    return stockQuotes[0];
+                    IList<StockQuote> stockQuotes = GetStockQuoteFromAPI(stockCode);
+
+                    if (stockQuotes != null && stockQuotes.Any())
+                    {
+                        return stockQuotes[0];
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new FormatException(e.Message);
                 }
             }
 

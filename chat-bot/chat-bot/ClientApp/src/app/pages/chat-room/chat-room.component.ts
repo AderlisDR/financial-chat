@@ -1,10 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ConnectedUser } from 'src/app/models/connected-user.model';
 import { ClientMessage } from '../../models/client-message.model';
+import { ConnectedUser } from '../../models/connected-user.model';
 import { AuthService } from '../../services/auth.service';
 import { MessengerService } from '../../services/messenger.service';
 
@@ -13,7 +13,11 @@ import { MessengerService } from '../../services/messenger.service';
   templateUrl: './chat-room.component.html',
   styleUrls: ['./chat-room.component.css']
 })
-export class ChatRoomComponent implements OnInit, OnDestroy {
+export class ChatRoomComponent implements OnInit {
+  @HostListener('window:unload', ['$event']) unloadHandler(event) {
+    this.disconnectCurrentUser();
+  };
+  @ViewChild('chat', { static: false }) private chatElement: ElementRef;
   connectedClients: ConnectedUser[] = [];
   connectedClientsSubscription: Subscription;
   currentMessages: ClientMessage[] = [];
@@ -42,14 +46,43 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     this.currentMessagesSubscription = this.messengerService.currentMessages.subscribe((currentMessages: ClientMessage[]) => {
       if (currentMessages !== undefined) {
         this.currentMessages = currentMessages;
+        this.chatScrollToBottom();
       }
     });
 
     this.newMessageSubscription = this.messengerService.newMessage.subscribe((newMessage: ClientMessage) => {
       if (newMessage !== undefined) {
         this.currentMessages.push(newMessage);
+        this.chatScrollToBottom();
+
+        if (newMessage.clientUserName === "#BOT") {
+          this.messengerService.saveBotMessage(newMessage);
+        }
       }
     });
+  }
+
+  private chatScrollToBottom() {
+    setTimeout(() => {
+      this.chatElement.nativeElement.scrollTop = this.chatElement.nativeElement.scrollHeight;
+    }, 100);
+  }
+
+  checkIsEnterKey(event) {
+    const enterKeyCode = 13;
+    if (event.keyCode === enterKeyCode) {
+      this.send();
+    }
+  }
+
+  getMessageStyleClassByUserName(userName: string) {
+    if (userName === "#BOT") {
+      return "bot";
+    } else if (userName === this.currentUserName) {
+      return "me";
+    } else {
+      return "you";
+    }
   }
 
   send() {
@@ -70,9 +103,9 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  disconnectCurrentUser() {
     this.connectedClientsSubscription.unsubscribe();
     this.currentMessagesSubscription.unsubscribe();
-    this.messengerService.closeConnectionForClient(this.currentUserName);
+    this.messengerService.closeConnectionForCurrentClient();
   }
 }
