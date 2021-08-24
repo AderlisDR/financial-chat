@@ -62,12 +62,12 @@ Follow the next steps to run this project locally:
 
 2. Open the project solution in Visual Studio, look inside the **ChatAPI** for the `appsettings.json` and set the connection string in the `appsettings.Development.json`.
 
-3. Open the **Package Manager Console**, if you can't find it, click Tools in the menu and click `NuGet Package Manager > Package Manager Console`, then select **Chat.Persistence** in the Default Project dropdown and run:
+3. Open the **Package Manager Console**, if you can't find it, click Tools in the menu and click `NuGet Package Manager > Package Manager Console`, then select **ChatAPI** in the Default Project dropdown from the Package Manager Console and run:
 ```
 Update-Database
 ```
 
-4. Open Powershell or Bash and run the next command to start the RabbitMQ Docker image as a container:
+4. Open Powershell or Bash and run the next command to start the RabbitMQ Docker image as a container. It's important that you keep this Powershell or Bash window open while running the application.
 ```
 docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
