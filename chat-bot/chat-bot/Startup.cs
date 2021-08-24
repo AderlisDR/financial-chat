@@ -36,7 +36,7 @@ namespace ChatAPI
         {
             services.AddOptions();
             services.AddControllersWithViews();
-            services.AddDbContext<DefaultContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Persistence")));
+            services.AddDbContext<DefaultContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Chat.Persistence")));
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<DefaultContext>();
             services.AddSignalR(opt => { opt.ClientTimeoutInterval = TimeSpan.FromMinutes(60); opt.KeepAliveInterval = TimeSpan.FromMinutes(30); }).AddJsonProtocol();
             services.AddAutoMapper(typeof(Startup));
